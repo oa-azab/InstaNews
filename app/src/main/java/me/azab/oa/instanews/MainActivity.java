@@ -1,11 +1,16 @@
 package me.azab.oa.instanews;
 
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.Context;
 import android.content.Loader;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
 
         // Initialize Story Adapter with empty
         storyList = new ArrayList<>();
-        storyList.add(new Story("You're stories will show here soon","","","url"));
         storyRecyclerViewAdapter = new StoryRecyclerViewAdapter(this, storyList);
 
         // Attach the adapter to the recyclerview to populate items
@@ -52,8 +56,32 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
         // Optimizations for significantly smoother scrolling
         storyRecyclerView.setHasFixedSize(true);
 
-        // Get LoaderManager reference and int loader
-        getLoaderManager().initLoader(STORY_ASYNC_TASK_LOADER_ID, null, this);
+        // Get a reference to the ConnectivityManager to check state of network connectivity
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        // Get details on the currently active default data network
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        // If there is a network connection, fetch data
+        if (networkInfo != null && networkInfo.isConnected()) {
+            // Get LoaderManager reference and int loader
+            getLoaderManager().initLoader(STORY_ASYNC_TASK_LOADER_ID, null, this);
+
+            // Show loading indicator
+            View loadingIndicator = findViewById(R.id.loading_indicator);
+            loadingIndicator.setVisibility(View.VISIBLE);
+        } else {
+            // Otherwise, display error
+            // Hide recyclerview
+            storyRecyclerView.setVisibility(View.GONE);
+
+            // Show no connection message
+            TextView emptyView = (TextView) findViewById(R.id.empty_view);
+            emptyView.setText(R.string.no_connection);
+            emptyView.setVisibility(View.VISIBLE);
+
+        }
     }
 
     @Override
@@ -64,7 +92,11 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
 
     @Override
     public void onLoadFinished(Loader<List<Story>> loader, List<Story> data) {
-        // TODO: update UI here
+        // Hide loading indicator
+        View loadingIndicator = findViewById(R.id.loading_indicator);
+        loadingIndicator.setVisibility(View.GONE);
+
+        // populate recyclerview with data
         storyList.clear();
         storyList.addAll(data);
         storyRecyclerViewAdapter.notifyDataSetChanged();
@@ -72,7 +104,6 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
 
     @Override
     public void onLoaderReset(Loader<List<Story>> loader) {
-        // TODO: remove data from UI
         storyList.clear();
     }
 }
