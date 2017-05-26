@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
     private static final int STORY_ASYNC_TASK_LOADER_ID = 1;
 
     // Test url
-    private static final String TEST_URL = "https://content.guardianapis.com/search?q=egypt&api-key=test&order-by=newest";
+    private static final String TEST_URL = "https://content.guardianapis.com/search?api-key=test&order-by=newest";
 
     // Stories recycler view
     private RecyclerView storyRecyclerView;
