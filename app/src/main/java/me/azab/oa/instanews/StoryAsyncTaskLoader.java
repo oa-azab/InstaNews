@@ -2,9 +2,7 @@ package me.azab.oa.instanews;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;
-import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,7 +11,7 @@ import java.util.List;
 
 
 /**
- *  AysncTaskLoader class that fetch stories from api
+ *  AsyncTaskLoader class that fetch stories from api
  *
  */
 public class StoryAsyncTaskLoader extends AsyncTaskLoader<List<Story>> {
@@ -33,21 +31,16 @@ public class StoryAsyncTaskLoader extends AsyncTaskLoader<List<Story>> {
     public StoryAsyncTaskLoader(Context context, String url) {
         super(context);
         mUrl = url;
-        Log.d("LoaderTest","StoryAsyncTaskLoader Constructor");
     }
 
     @Override
     protected void onStartLoading() {
         forceLoad();
-        Log.d("LoaderTest","onStartLoading forceLoad");
     }
 
     @Override
     public List<Story> loadInBackground() {
-        List<Story> list = new ArrayList<>();
-        list.add(new Story());
-        list.add(new Story());
-        Log.d("LoaderTest","loadInBackground");
+        List<Story> list = QueryUtils.fetchStoryData(mUrl);
         return list;
     }
 }
