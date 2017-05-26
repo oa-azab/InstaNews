@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
     private static final int STORY_ASYNC_TASK_LOADER_ID = 1;
 
     // Test url
-    private static final String TEST_URL = "https://content.guardianapis.com/search?q=egypt&api-key=test";
+    private static final String TEST_URL = "https://content.guardianapis.com/search?q=egypt&api-key=test&order-by=newest";
 
     // Stories recycler view
     private RecyclerView storyRecyclerView;
@@ -48,6 +48,9 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
 
         // Set layout manager to position the items
         storyRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // Optimizations for significantly smoother scrolling
+        storyRecyclerView.setHasFixedSize(true);
 
         // Get LoaderManager reference and int loader
         getLoaderManager().initLoader(STORY_ASYNC_TASK_LOADER_ID, null, this);

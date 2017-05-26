@@ -5,6 +5,8 @@ package me.azab.oa.instanews;
  */
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,9 +17,8 @@ import java.util.List;
 
 /**
  * StoryRecyclerViewAdapter class that handel
- *
  */
-public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<StoryRecyclerViewAdapter.ViewHolder>{
+public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<StoryRecyclerViewAdapter.ViewHolder> {
 
     // List of story objects holding story info
     private List<Story> storyList;
@@ -70,7 +71,7 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<StoryRecycler
 
     // Provide a direct reference to each of the views within a data item
     // Used to cache the views within the item layout for fast access
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         // Your holder should contain a member variable
         // for any view that will be set as you render a row
         public TextView titleTextView;
@@ -87,6 +88,27 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<StoryRecycler
             titleTextView = (TextView) itemView.findViewById(R.id.item_title);
             sectionTextView = (TextView) itemView.findViewById(R.id.item_section);
             dateTextView = (TextView) itemView.findViewById(R.id.item_date);
+
+            // on item click open story in browser
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) { // Check if an item was deleted, but the user clicked it before the UI removed it
+                        Story story = storyList.get(position);
+
+                        // Convert the String URL into a URI object (to pass into the Intent constructor)
+                        Uri storyUri = Uri.parse(story.getUrl());
+
+                        // Create a new intent to view the story URI
+                        Intent websiteIntent = new Intent(Intent.ACTION_VIEW, storyUri);
+
+                        // Send the intent to launch a new activity
+                        context.startActivity(websiteIntent);
+                    }
+                }
+            });
         }
     }
 }
+
